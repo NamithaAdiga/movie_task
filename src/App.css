@@ -21,6 +21,7 @@
 }
 .movie-container{
   width: 340px;
+  margin-top: 20px;
 }
 .user-name{
   font-size: 25px;
@@ -36,4 +37,8 @@
 }
 body{
   margin: 24px;
+}
+nav{
+  display: flex;
+  gap: 1rem;
 }
