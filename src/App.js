@@ -1,7 +1,7 @@
 // import App from './App';
 import './App.css';
 import Initial_Movies from './data'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MovieList } from './MovieList';
  import Button from '@mui/material/Button';
  import TextField from '@mui/material/TextField';
@@ -17,18 +17,37 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import Card from '@mui/material/Card';
 import { CardActions, CardContent } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
 
 export default function App() {
-  const [movielist, setMovieList] = useState(Initial_Movies)
+  const [mode, setMode] = useState("dark");
+  const theme = createTheme({
+    palette: {
+      mode: mode,
+    },
+  });
+  const [movielist, setMovieList] = useState([Initial_Movies]);
+  //  const getMovies=()=>{
+  //    fetch("https://61d92d6dce86530017e3ca26.mockapi.io/movies",{
+  //      method:"GET",
+  //    }).then((data)=>data.json())
+  //    .then((mvs)=>setMovieList(mvs));
+  //  }
+  //  useEffect(getMovies,[]);
   const history=useHistory();
   return (
+    <ThemeProvider theme={theme}>
+      <Paper sx={{minHeight:'100vh'}}elevation={0} >
     <div className="App">
       <AppBar position="static">
       <Toolbar>
       <Button color="inherit" onClick={()=>history.push("/home")}>Home</Button>
       <Button color="inherit"onClick={()=>history.push("/addmovie")}>Addmovie</Button>
       <Button color="inherit" onClick={()=>history.push("/movies")} >Movies</Button>
-    
+      <Button sx={{marginLeft:"auto"}}
+      color="inherit" onClick={()=>setMode(mode === "light"? "dark" : "light")}>
+        {mode === "light"? "dark" : "light"} mode</Button>
       </Toolbar>
       </AppBar>
      <section className="route-container">
@@ -36,8 +55,9 @@ export default function App() {
       <Route path="/addmovie">
       <Add movielist={movielist} setMovieList={setMovieList} /> 
       </Route>
+      <Route path="/movie/edit/:id">Edit Movie</Route>
       <Route path="/movies/:id">
-        <MovieDetails movies={movielist} />
+        <MovieDetails />
       </Route>
       <Route path="/movies">
       <MovieList movies={movielist} setMovieList={setMovieList} />
@@ -46,13 +66,14 @@ export default function App() {
       <Home />
       </Route>
       </Switch>
-     
+      
       </section>
     </div>
-   
+    </Paper>
+    </ThemeProvider>
   );
  }
- export function Movie({ name, poster, ratings, summary, deleteButton, id }) {
+ export function Movie({ name, poster, ratings, summary, deleteButton,editButton, id }) {
   const [show, setShow] = useState(true);
   const history = useHistory();
   const descriptionStyles = { display: show ? "block" : "none" };
@@ -84,9 +105,9 @@ export default function App() {
         <CardActions>
           <Counter />
           {deleteButton}
+          {editButton}
         </CardActions>
       </Card>
-
     </>
   );
 }
